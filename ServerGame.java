@@ -35,10 +35,10 @@ public class ServerGame implements Runnable {
 		nbBomb = (int) ((height * width) / 16); //En moyenne une bombe tous les lots de 4*4 cases.
 
 		//Initialisation du terrain de jeu
-		board = new GameBoard(boardWidth, boardHeight);
+		board = new GameBoard(boardHeight, boardWidth);
 		board.initialiseBoard(nbColor, nbPlayer, nbBomb);
 		
-		if(DEBUG) System.err.println("ServerGame > Construction achevée");
+		if(DEBUG) System.err.println("ServerGame > Construction achevée : hauteur : "+ boardHeight+" largeur : "+boardWidth);
 	}
 	
 ////////////////////////////RUNNING////////////////////////////////////////

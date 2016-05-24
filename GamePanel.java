@@ -83,14 +83,17 @@ public class GamePanel extends JPanel {
 		
 		this.add(boardPan, BorderLayout.CENTER);
 		
-		for(int i = 0; i < board.length; ++i){
-			for(int j = 0; j < board[i].length; ++j){
-				System.out.print(board[i][j][0]+ " " );
+		if(DEBUG){
+			System.err.println("GamePanel.showBoard > informations recues");
+
+			for(int i = 0; i < board.length; ++i){
+				for(int j = 0; j < board[i].length; ++j){
+					System.err.print(board[i][j][0]+ " " );
+				}
+				System.err.println("");
 			}
-			System.out.println("");
+			
 		}
-		
-		if(DEBUG) System.err.println("GamePanel.showBoard > informations recues");
 	}
 	
 	
@@ -108,38 +111,6 @@ class BoardPanel extends JPanel{
 		
 		this.setBackground(Color.darkGray);
 		
-		for(int i = 0; i < board.length; ++i){
-			for(int j = 0; j < board[0].length; ++j ){
-			
-				//Choix de la couleur selon le numero de la case
-				// ==> A voir si peut être rendu parametrable
-				switch(board[i][j][0]){
-				case "0" :
-					g.setColor(Color.cyan);
-					break;
-				case "1" :
-					g.setColor(Color.magenta);
-					break;
-				case "2" :
-					g.setColor(Color.green);
-					break;
-				case "3" :
-					g.setColor(Color.orange);
-					break;
-				case "4" :
-					g.setColor(Color.yellow);
-					break;
-				case "5" :
-					g.setColor(Color.red);
-					break;
-				default :
-					g.setColor(Color.black);
-					break;
-				}
-			
-				g.fillRect(i*(cellSize + 1), j*(cellSize + 1), cellSize, cellSize);
-			}
-		}
 	} 
 	
 	public void paintComponent(Graphics g){
@@ -147,7 +118,7 @@ class BoardPanel extends JPanel{
 		this.setBackground(Color.darkGray);
 		
 		for(int i = 0; i < board.length; ++i){
-			for(int j = 0; j < board[0].length; ++j ){
+			for(int j = 0; j < board[i].length; ++j ){
 			
 				//Choix de la couleur selon le numero de la case
 				// ==> A voir si peut être rendu parametrable
@@ -175,7 +146,7 @@ class BoardPanel extends JPanel{
 					break;
 				}
 			
-				g.fillRect(i*(cellSize + 1), j*(cellSize + 1), cellSize, cellSize);
+				g.fillRect(j*(cellSize + 1), i*(cellSize + 1), cellSize, cellSize);
 			}
 		}
 	}

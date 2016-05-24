@@ -323,7 +323,7 @@ public class GameBoard {
 					
 					for(int k = 0; k < board[i][j].length; ++k){
 						//triplet "couleur joueur bombe" délimitées par des espaces.
-						printedBoard += board[i][j][0]; 
+						printedBoard += board[i][j][k]; 
 						
 						if (k + 1 != board[i][j].length){
 							printedBoard += " ";
@@ -335,7 +335,7 @@ public class GameBoard {
 					}
 				}
 				//lignes délimitées par des tirets.
-				if (i + 1 != board[i].length){
+				if (i + 1 != board.length){
 					printedBoard += "-";
 				}
 			}

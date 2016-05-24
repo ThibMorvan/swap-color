@@ -31,14 +31,14 @@ public class GameWindow extends JFrame implements Observable, Observer {
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		//////////////////////////////////////////////////////////////
 
-		this.mainMenu();
+		this.mainMenu(true);
 		
 	}
 	
 	public void goToPage(String index){
 		switch(index){
 			case "0" :
-				this.mainMenu();
+				this.mainMenu(false);
 				break;
 			case "1" :
 				this.createMenu();
@@ -73,7 +73,7 @@ public class GameWindow extends JFrame implements Observable, Observer {
 		output[4] = boardWidth;
 		this.updateObserver();
 		
-		if(DEBUG) System.err.println("GameWindow> fait une demande de creation de partie");
+		if(DEBUG) System.err.println("GameWindow> fait une demande de creation de partie : height = "+output[3]+" width = "+output[4]);
 		
 	}
 	
@@ -101,13 +101,17 @@ public class GameWindow extends JFrame implements Observable, Observer {
 	/********************************
 	 ** GESTION DES PAGES DE MENUS **
 	 ********************************/
-	private  void mainMenu(){
+	private  void mainMenu(boolean init){
 		
 		if(DEBUG) System.err.println("GameWindow> Fonction MainMenu() lancée");
 		
 		MainMenuPanel mainMenuPan = new MainMenuPanel();
 		this.setContentPane(mainMenuPan);
 		this.setVisible(true);
+		
+		//Réinitialise les observers
+		this.delObserver();
+		if(!init) Main.ObserveWindow();
 		
 	}
 	
@@ -220,13 +224,15 @@ public class GameWindow extends JFrame implements Observable, Observer {
 			e.printStackTrace();
 		}
 		
-		String[] tmpRow = new String[height];
-		String[][] tmpCol = new String[height][width];
+		if(DEBUG) System.err.println(height + " " + width + " " + board);
+		
 		String[][][] result = new String[height][width][3];
+		String[][] tmpCol = new String[height][width];
+		String[] tmpRow = new String[height];
 		
 		tmpRow = board.split("-");
 		
-		for (int i = 0; i < tmpCol.length; ++i){
+		for(int i = 0; i < tmpRow.length; ++i){
 			tmpCol[i] = tmpRow[i].split(",");
 		}
 		
