@@ -68,6 +68,8 @@ public class ClientGame implements Runnable, Observable, Observer {
 			serverOrder = stringToArray(serverInput);
 			
 			//Traite la réponse reçue
+			if(DEBUG) System.err.println("ClientGame > Ordre recu : "+ serverOrder[0]);
+			
 			switch(serverOrder[0]){
 			
 			//Premier ordre, recu une seule fois, donne au client son identifiant de joueur.
@@ -117,7 +119,7 @@ public class ClientGame implements Runnable, Observable, Observer {
 				}
 				
 			default :
-				if(DEBUG) System.err.println("ClientGame > Commande non reconnue");
+				if(DEBUG) System.err.println("ClientGame > Commande non reconnue : "+ serverOrder[0]);
 				break;
 			}
 		}

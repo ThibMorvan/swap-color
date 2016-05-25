@@ -168,6 +168,15 @@ public class ServerGame implements Runnable {
 			}
 			
 		}
+		//quand un joueur est determiné vainqueur, sort de la boucle de jeu
+		order[0] = "END";
+		order[1] = Integer.toString( board.winnerID());
+		order[2] = "Félicitations, vous avez gagné la partie !";
+		order[3] = "Le joueur " + board.winnerID() + " a gagné la partie";
+		order[4] = board.toString();
+		
+		this.broadCast(order);
+		if(DEBUG) System.err.println("ServerGame > order sent : "+ order[0]);
 	}
 	
 	
