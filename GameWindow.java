@@ -9,7 +9,7 @@ import java.awt.Graphics;
 
 public class GameWindow extends JFrame implements Observable, Observer {
 
-	private static boolean DEBUG = true;
+	private static boolean DEBUG = false;
 	
 	//Variable de communication entre observer/observables
 	private ArrayList<Observer> obsList = new  ArrayList<Observer>();
@@ -231,8 +231,6 @@ public class GameWindow extends JFrame implements Observable, Observer {
 		} catch(NumberFormatException e){
 			e.printStackTrace();
 		}
-		
-		if(DEBUG) System.err.println(height + " " + width + " " + board);
 		
 		String[][][] result = new String[height][width][3];
 		String[][] tmpCol = new String[height][width];

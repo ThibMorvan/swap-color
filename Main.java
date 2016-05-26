@@ -1,7 +1,7 @@
 
 public class Main {
 	
-	private static boolean DEBUG = true;
+	private static boolean DEBUG = false;
 	
 	private static String[] input = new String[5];
 	public static GameWindow window;

@@ -13,7 +13,7 @@ import javax.swing.JTextField;
 
 public class GamePanel extends JPanel {
 
-	private boolean DEBUG = true;
+	private boolean DEBUG = false;
 	
 	private BoardPanel boardPan;
 	private String[][][] arrayBoard;

@@ -8,7 +8,7 @@ import java.io.BufferedInputStream;
 
 public class ClientGame implements Runnable, Observable, Observer {
 	
-	private boolean DEBUG = true;
+	private boolean DEBUG = false;
 	
 	private ArrayList<Observer> obsList = new  ArrayList<Observer>();
 	private String[] instruction = new String[5];
