@@ -8,7 +8,7 @@ import java.io.BufferedInputStream;
 
 public class ClientGame implements Runnable, Observable, Observer {
 	
-	private boolean DEBUG = false;
+	private boolean DEBUG = true;
 	
 	private ArrayList<Observer> obsList = new  ArrayList<Observer>();
 	private String[] instruction = new String[5];
@@ -57,11 +57,14 @@ public class ClientGame implements Runnable, Observable, Observer {
 			//Attend un message en provenance du serveur et le retranscrit en formulaire d'ordre.
 			while(serverInput.equals("")){
 				try{
-					if(reader.available() > 0){
-						serverInput = read();
-					}
+					serverInput = read();
 				}catch(IOException e){
-					e.printStackTrace();
+					
+					if(DEBUG) System.err.println("ClientGame> Error : " + e.getMessage());
+					
+					serverInput = "DEAD";
+					isRunning = false;
+					
 				}
 			}
 			
@@ -117,30 +120,32 @@ public class ClientGame implements Runnable, Observable, Observer {
 					instruction[2] = serverOrder[4];
 					this.updateObserver();
 				}
+				break;
+			case "DEAD" : 
+				//Informe le joueur de la déconnexion.
+				instruction[0] = "DEAD";
+				instruction[1] = "Vous avez été déconnecté du serveur.";
+				this.updateObserver();
+
+				break;
 				
 			default :
 				if(DEBUG) System.err.println("ClientGame > Commande non reconnue : "+ serverOrder[0]);
 				break;
 			}
 		}
-		
-		//Fin du jeu, affiche le résultat final et la victoire
-		try{
-			serverInput = read();
-		}catch(IOException e){
-			e.printStackTrace();
-		}
-		
-		//System.out.println(serverInput);
-		
+
 		//Fermeture de la connexion
-		writer = null;
-		reader = null;
 		try{
+			writer.close();
+			reader.close();
 			clientSocket.close();
+			if(DEBUG) System.err.println("ClientGame> Connexion Shutdown");
 		}catch(IOException e){
-			e.printStackTrace();
+			writer = null;
+			reader = null;
 		}
+		
 		
 	}
 	

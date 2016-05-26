@@ -156,7 +156,14 @@ public class ServerGame implements Runnable {
 						writer[currentPlayer - 1].write("ping");
 						writer[currentPlayer - 1].flush();
 						playerInput = read(reader[currentPlayer - 1]);
-						playerInstruction = this.stringToArray(playerInput);
+						
+						//filtre les pings
+						if(!playerInput.equals("ping")){
+							playerInstruction = this.stringToArray(playerInput);
+						} else {
+							if(DEBUG) System.err.println("ServerGame> Drop playerInput : " + playerInput);
+							playerInput = "";
+						}
 						
 					}catch(IOException e){ //Exception levée en cas de perte de connexion du joueur 
 						
