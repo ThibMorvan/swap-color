@@ -25,12 +25,11 @@ public class JoinPanel extends JPanel {
 
 		JLabel labPort = new JLabel("Port de connexion");
 		String port = "";
-		JTextField choosePort = new JTextField("2345");
+		JTextField choosePort = new JTextField();
 		Dimension dimPort = new Dimension(40,20);
 		choosePort.setPreferredSize(dimPort);
 				
 		JButton validate = new JButton("VALIDER");
-		//validate.addActionListener(new MenuListener(4));
 		validate.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				Main.window.tryJoin(chooseAddress.getText(), choosePort.getText());

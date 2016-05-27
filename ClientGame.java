@@ -8,7 +8,7 @@ import java.io.BufferedInputStream;
 
 public class ClientGame implements Runnable, Observable, Observer {
 	
-	private boolean DEBUG = true;
+	private boolean DEBUG = false;
 	
 	private ArrayList<Observer> obsList = new  ArrayList<Observer>();
 	private String[] instruction = new String[5];
@@ -57,17 +57,22 @@ public class ClientGame implements Runnable, Observable, Observer {
 			//Attend un message en provenance du serveur et le retranscrit en formulaire d'ordre.
 			while(serverInput.equals("")){
 				try{
-					if(reader.available() > 0){
-						serverInput = read();
-					}
+					serverInput = read();
 				}catch(IOException e){
-					e.printStackTrace();
+					
+					if(DEBUG) System.err.println("ClientGame> Error : " + e.getMessage());
+					
+					serverInput = "DEAD";
+					isRunning = false;
+					
 				}
 			}
 			
 			serverOrder = stringToArray(serverInput);
 			
 			//Traite la réponse reçue
+			if(DEBUG) System.err.println("ClientGame > Ordre recu : "+ serverOrder[0]);
+			
 			switch(serverOrder[0]){
 			
 			//Premier ordre, recu une seule fois, donne au client son identifiant de joueur.
@@ -76,7 +81,7 @@ public class ClientGame implements Runnable, Observable, Observer {
 				playerID = serverOrder[1];
 				
 				instruction[0] = "INITIALISE";
-				instruction[1] = "Vous êtes le joueur " + playerID;
+				instruction[1] = "Vous êtes le joueur " + playerID+ ". En attente de joueurs à l'adresse "+serverOrder[5]+", sur le port " + serverOrder[6];
 				instruction[2] = serverOrder[2];
 				instruction[3] = serverOrder[3];
 				instruction[4] = serverOrder[4];
@@ -85,7 +90,7 @@ public class ClientGame implements Runnable, Observable, Observer {
 				//Informe le joueur qu'il est connecté et que son numero est playerID
 				if(DEBUG) System.err.println("ClientGame > playerID reçu de la part du serveur : "+playerID);
 				break;
-			
+				
 			//Ordre diffusé en broadcast, donne l'etat du plateau et annonce a qui c'est le tour.
 			// serverOdrder[1] = joueur qui dois jouer; [2] = informations du joueur qui dois jouer; [3] Informations des autres joueurs; [4] = terrain de jeu. 
 			case "TURN" :
@@ -115,30 +120,32 @@ public class ClientGame implements Runnable, Observable, Observer {
 					instruction[2] = serverOrder[4];
 					this.updateObserver();
 				}
+				break;
+			case "DEAD" : 
+				//Informe le joueur de la déconnexion.
+				instruction[0] = "DEAD";
+				instruction[1] = "Vous avez été déconnecté du serveur.";
+				this.updateObserver();
+
+				break;
 				
 			default :
-				if(DEBUG) System.err.println("ClientGame > Commande non reconnue");
+				if(DEBUG) System.err.println("ClientGame > Commande non reconnue : "+ serverOrder[0]);
 				break;
 			}
 		}
-		
-		//Fin du jeu, affiche le résultat final et la victoire
-		try{
-			serverInput = read();
-		}catch(IOException e){
-			e.printStackTrace();
-		}
-		
-		//System.out.println(serverInput);
-		
+
 		//Fermeture de la connexion
-		writer = null;
-		reader = null;
 		try{
+			writer.close();
+			reader.close();
 			clientSocket.close();
+			if(DEBUG) System.err.println("ClientGame> Connexion Shutdown");
 		}catch(IOException e){
-			e.printStackTrace();
+			writer = null;
+			reader = null;
 		}
+		
 		
 	}
 	

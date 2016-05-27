@@ -1,7 +1,7 @@
 
 public class Main {
 	
-	private static boolean DEBUG = true;
+	private static boolean DEBUG = false;
 	
 	private static String[] input = new String[5];
 	public static GameWindow window;
@@ -16,7 +16,17 @@ public class Main {
 		window = new GameWindow();
 		input[0]="";
 		
-//OBSERVER => Observe les changements de page => recupère toutes les infos dans Input puis lis Input[0] pour savoir quoi faire.
+		ObserveWindow();
+		
+		/////////////////////////////////////////////////////
+		
+		
+			
+	}
+	
+	//OBSERVER => Observe les changements de page => recupère toutes les infos dans Input puis lis Input[0] pour savoir quoi faire.
+	//Fonction a part pour être appelé a chaque retour au menu principal pour supprimer les observer ClientGame sur window.
+	public static void ObserveWindow(){
 		window.addObserver(new Observer(){
 			public void update(String arguments[]){
 				for(int i = 0; i < 5; ++i){
@@ -25,11 +35,6 @@ public class Main {
 				manageInput();
 			}
 		});
-
-		/////////////////////////////////////////////////////
-		
-		
-			
 	}
 	
 /*********************************************************
@@ -51,6 +56,7 @@ public class Main {
 			} catch(NumberFormatException e){
 				e.printStackTrace();
 			}
+			//0 = nbplayer, 1 = nbcolor, 2 = height, 3 = width
 			createGame(parsedInput[0],parsedInput[1],parsedInput[2],parsedInput[3]);
 			break;
 		case "JOIN" : 
@@ -71,7 +77,7 @@ public class Main {
 	//Cree un thread avec le serveur puis tente de s'y connecter en utilisant la methode joinGame.
 	public static void createGame(int nbPlayer, int nbColor, int height, int width){
 		
-		if(DEBUG) System.err.println("Main> creation de jeu a " + nbPlayer + " joueurs, "+ nbColor + " couleurs, et de "+ height+ "*"+ width );
+		if(DEBUG) System.err.println("Main> creation de jeu a " + nbPlayer + " joueurs, "+ nbColor + " couleurs, de hauteur"+ height+ " et de largeur "+ width );
 		
 		Thread t_server = new Thread(new ServerGame(nbPlayer, nbColor, height, width));
 		t_server.start();
@@ -110,5 +116,6 @@ public class Main {
 	//Setter pour récupérer le port et l'adresse du serveur
 	public static void setServerAddress(String IPAddress) { serverAdress = IPAddress; }
 	public static void setServerPort(String port) {serverPort = port; }
+	
 	
 }

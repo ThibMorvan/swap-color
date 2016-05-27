@@ -9,7 +9,7 @@ import java.awt.Graphics;
 
 public class GameWindow extends JFrame implements Observable, Observer {
 
-	private static boolean DEBUG = true;
+	private static boolean DEBUG = false;
 	
 	//Variable de communication entre observer/observables
 	private ArrayList<Observer> obsList = new  ArrayList<Observer>();
@@ -31,14 +31,14 @@ public class GameWindow extends JFrame implements Observable, Observer {
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		//////////////////////////////////////////////////////////////
 
-		this.mainMenu();
+		this.mainMenu(true);
 		
 	}
 	
 	public void goToPage(String index){
 		switch(index){
 			case "0" :
-				this.mainMenu();
+				this.mainMenu(false);
 				break;
 			case "1" :
 				this.createMenu();
@@ -73,7 +73,7 @@ public class GameWindow extends JFrame implements Observable, Observer {
 		output[4] = boardWidth;
 		this.updateObserver();
 		
-		if(DEBUG) System.err.println("GameWindow> fait une demande de creation de partie");
+		if(DEBUG) System.err.println("GameWindow> fait une demande de creation de partie : height = "+output[3]+" width = "+output[4]);
 		
 	}
 	
@@ -101,13 +101,17 @@ public class GameWindow extends JFrame implements Observable, Observer {
 	/********************************
 	 ** GESTION DES PAGES DE MENUS **
 	 ********************************/
-	private  void mainMenu(){
+	private  void mainMenu(boolean init){
 		
 		if(DEBUG) System.err.println("GameWindow> Fonction MainMenu() lancée");
 		
 		MainMenuPanel mainMenuPan = new MainMenuPanel();
 		this.setContentPane(mainMenuPan);
 		this.setVisible(true);
+		
+		//Réinitialise les observers
+		this.delObserver();
+		if(!init) Main.ObserveWindow();
 		
 	}
 	
@@ -163,6 +167,7 @@ public class GameWindow extends JFrame implements Observable, Observer {
 	public void updateObserver(){
 		//s'il n'y a qu'un seul objet dans la liste, ce DOIT être le main. 
 		//Traitement spécifique ajouté pour effectuer un Join ou Create sans ramasser un "java.util.ConcurrentModificationException"
+		
 		if (obsList.size() == 1){
 			obsList.get(0).update(output);
 		} else {
@@ -187,19 +192,35 @@ public class GameWindow extends JFrame implements Observable, Observer {
 			this.gamePan.setInfo(order[1]);
 			
 			break;
+
 		case "GO" :
 			//Recupère les infos a afficher et attends le tour du joueur Eventuellement reactive les ColorButtons.
 			this.gamePan.setInfo(order[1]);
-			this.gamePan.showBoard(organiseBoard(order[2]));
+			this.gamePan.setBoard(organiseBoard(order[2]));
 			this.gamePan.repaint();
 			this.setVisible(true);
 			break;
 		case "WAIT" :
 			//Recupère les informations a afficher et attends l'instruction GO. Eventuellement desactive les ColorButtons.
+			this.gamePan.setInfo(order[1]);
+			this.gamePan.setBoard(organiseBoard(order[2]));
+			this.gamePan.repaint();
+			this.setVisible(true);
 			break;
 		case "OVER" :
 			//Recupère les informations et termine la partie => désactive les ColorButtons.
+			this.gamePan.setInfo(order[1]);
+			this.gamePan.setBoard(organiseBoard(order[2]));
+			this.gamePan.repaint();
+			this.setVisible(true);
 			break;
+		case "DEAD" :
+			//Deconnexion du serveur : récupère les informations et termine la partie.
+			this.gamePan.setInfo(order[1]);
+			this.gamePan.repaint();
+			this.setVisible(true);
+			break;
+			
 		default :
 			//Drop and Chill.
 			break;
@@ -220,13 +241,13 @@ public class GameWindow extends JFrame implements Observable, Observer {
 			e.printStackTrace();
 		}
 		
-		String[] tmpRow = new String[height];
-		String[][] tmpCol = new String[height][width];
 		String[][][] result = new String[height][width][3];
+		String[][] tmpCol = new String[height][width];
+		String[] tmpRow = new String[height];
 		
 		tmpRow = board.split("-");
 		
-		for (int i = 0; i < tmpCol.length; ++i){
+		for(int i = 0; i < tmpRow.length; ++i){
 			tmpCol[i] = tmpRow[i].split(",");
 		}
 		

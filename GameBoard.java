@@ -5,7 +5,7 @@ import java.io.Serializable;
 
 public class GameBoard {
 
-	private boolean DEBUG = true;
+	private boolean DEBUG = false;
 	
 	//Attributs
 	private int[][][] board;
@@ -14,10 +14,6 @@ public class GameBoard {
 	/***********************
 	 **** CONSTRUCTORS *****
 	 **********************/
-	public GameBoard(int size) {
-		
-		board = new int[size][size][3];
-	}
 	
 	public GameBoard(int height, int width) {
 		
@@ -148,7 +144,7 @@ public class GameBoard {
 	//Répète jusqu'à ce qu'il n'y ai plus de modification.
 	private void floodBoard(int player){
 
-		if(DEBUG) System.err.println("GameBoard >> Debut de FloodBoard");
+		if(DEBUG) System.err.println("GameBoard >> Debut de FloodBoard pour le joueur " + player);
 		
 		int colorPlayed = -1;
 		boolean isFlooding = true;
@@ -166,6 +162,8 @@ public class GameBoard {
 			}
 			if(colorPlayed >= 0) i = board.length; //Si couleur trouvée, sors de la boucle lignes
 		}
+		
+		if(colorPlayed == -1) isFlooding = false; //Cas particulier des joueurs "morts"
 				
 		while(isFlooding){
 			
@@ -183,7 +181,7 @@ public class GameBoard {
 											(isInIndex(i,j-1) && board[i][j-1][1] == player)){
 								
 								board[i][j][1] = player;
-								isFlooding = true;
+								isFlooding = true; //Si au moins une case modifiée, refait un passage sur tout le tableau
 								//Detecte et active les bombes
 								if(board[i][j][2] != 0){
 									switch(board[i][j][2]) {
@@ -209,12 +207,34 @@ public class GameBoard {
 		
 	}
 	
-	// /!\ //Vérifie s'il y a un vainqueur et si oui lequel. Si retourne 0 : pas de vainqueur.
+	//Methode a n'utiliser que s'il y a au moins 3 joueurs : 
+	//supprime le joueur passé en paramètre puis redistribue aleatoirement ses cases
+	public void killPlayer(int player){
+		
+		Random dice = new Random();
+		
+		if(DEBUG) System.err.println("GameBoard> Start Killing player " + player);
+		
+		for(int i = 0; i < board.length; ++i){
+			for(int j = 0; j < board[i].length; ++j){
+				if(board[i][j][1] == player) {
+					board[i][j][1] = 0; //Efface la présence du joueur
+					board[i][j][0] = dice.nextInt(nbColor); //remélange les couleurs
+				}
+			}
+		}
+		
+		for(int i = 1; i <= nbPlayer; ++i){
+			this.floodBoard(i); //Redistribue le terrain du joueur pour être cohérent
+		}
+	}
+	
+	// /!\ //Vérifie s'il y a un vainqueur et si oui lequel. Si retourne -1 : pas de vainqueur. devra retourner 0 pour ex aequo
 	public int winnerID(){
 		
-		int winnerID = 0;
-		int[] playerScore = new int[nbPlayer];
-		int winningScore = (int)Math.ceil((board.length * board[0].length)/ nbPlayer);
+		int winnerID = -1;
+		int[] playerScore = new int[nbPlayer + 1];
+		int winningScore = 0;
 		
 		//Initialise les scores
 		for(int i : playerScore) playerScore[i] = 0;
@@ -222,18 +242,19 @@ public class GameBoard {
 		for (int i = 0; i < board.length; i++) {
 			for (int j = 0; j < board[i].length; j++) {
 				if(isInIndex(i,j) && board[i][j][1] == 0 ){
-					return 0; //Si il reste au moins une case qui n'appartien a personne, la partie n'est pas finie. Retourne 0.
+					return -1; //Si il reste au moins une case qui n'appartien a personne, la partie n'est pas finie. Retourne 0.
 				} else {
-					++playerScore[board[i][j][1] - 1]; //Compte les cases pour chaque joueur
+					++playerScore[board[i][j][1]]; //Compte les cases pour chaque joueur
 				}
 			}
 		}
 		
 		//Compare au score minimum pour gagner
-		///// /!\ A TESTER ET AMELIORER POUR CAS PARTICULIERS, PLUS DE 2 JOUEURS ET EX AEQUO
+		///// /!\ A TESTER ET AMELIORER POUR CAS PARTICULIERS COMME LE EX AEQUO
 		for(int i = 0; i < playerScore.length; i++){
 			if (playerScore[i] >= winningScore){
-				winnerID = i + 1;
+				winnerID = i;
+				winningScore = playerScore[i];
 			}
 		}
 		
@@ -323,7 +344,7 @@ public class GameBoard {
 					
 					for(int k = 0; k < board[i][j].length; ++k){
 						//triplet "couleur joueur bombe" délimitées par des espaces.
-						printedBoard += board[i][j][0]; 
+						printedBoard += board[i][j][k]; 
 						
 						if (k + 1 != board[i][j].length){
 							printedBoard += " ";
@@ -335,7 +356,7 @@ public class GameBoard {
 					}
 				}
 				//lignes délimitées par des tirets.
-				if (i + 1 != board[i].length){
+				if (i + 1 != board.length){
 					printedBoard += "-";
 				}
 			}
