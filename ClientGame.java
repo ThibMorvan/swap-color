@@ -8,7 +8,7 @@ import java.io.BufferedInputStream;
 
 public class ClientGame implements Runnable, Observable, Observer {
 	
-	private boolean DEBUG = true;
+	private boolean DEBUG = false;
 	
 	private ArrayList<Observer> obsList = new  ArrayList<Observer>();
 	private String[] instruction = new String[5];
@@ -81,7 +81,7 @@ public class ClientGame implements Runnable, Observable, Observer {
 				playerID = serverOrder[1];
 				
 				instruction[0] = "INITIALISE";
-				instruction[1] = "Vous êtes le joueur " + playerID;
+				instruction[1] = "Vous êtes le joueur " + playerID+ ". En attente de joueurs à l'adresse "+serverOrder[5]+", sur le port " + serverOrder[6];
 				instruction[2] = serverOrder[2];
 				instruction[3] = serverOrder[3];
 				instruction[4] = serverOrder[4];
@@ -90,7 +90,7 @@ public class ClientGame implements Runnable, Observable, Observer {
 				//Informe le joueur qu'il est connecté et que son numero est playerID
 				if(DEBUG) System.err.println("ClientGame > playerID reçu de la part du serveur : "+playerID);
 				break;
-			
+				
 			//Ordre diffusé en broadcast, donne l'etat du plateau et annonce a qui c'est le tour.
 			// serverOdrder[1] = joueur qui dois jouer; [2] = informations du joueur qui dois jouer; [3] Informations des autres joueurs; [4] = terrain de jeu. 
 			case "TURN" :

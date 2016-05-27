@@ -167,6 +167,7 @@ public class GameWindow extends JFrame implements Observable, Observer {
 	public void updateObserver(){
 		//s'il n'y a qu'un seul objet dans la liste, ce DOIT être le main. 
 		//Traitement spécifique ajouté pour effectuer un Join ou Create sans ramasser un "java.util.ConcurrentModificationException"
+		
 		if (obsList.size() == 1){
 			obsList.get(0).update(output);
 		} else {
@@ -191,27 +192,35 @@ public class GameWindow extends JFrame implements Observable, Observer {
 			this.gamePan.setInfo(order[1]);
 			
 			break;
+
 		case "GO" :
 			//Recupère les infos a afficher et attends le tour du joueur Eventuellement reactive les ColorButtons.
 			this.gamePan.setInfo(order[1]);
-			this.gamePan.showBoard(organiseBoard(order[2]));
+			this.gamePan.setBoard(organiseBoard(order[2]));
 			this.gamePan.repaint();
 			this.setVisible(true);
 			break;
 		case "WAIT" :
 			//Recupère les informations a afficher et attends l'instruction GO. Eventuellement desactive les ColorButtons.
 			this.gamePan.setInfo(order[1]);
-			this.gamePan.showBoard(organiseBoard(order[2]));
+			this.gamePan.setBoard(organiseBoard(order[2]));
 			this.gamePan.repaint();
 			this.setVisible(true);
 			break;
 		case "OVER" :
 			//Recupère les informations et termine la partie => désactive les ColorButtons.
 			this.gamePan.setInfo(order[1]);
-			this.gamePan.showBoard(organiseBoard(order[2]));
+			this.gamePan.setBoard(organiseBoard(order[2]));
 			this.gamePan.repaint();
 			this.setVisible(true);
 			break;
+		case "DEAD" :
+			//Deconnexion du serveur : récupère les informations et termine la partie.
+			this.gamePan.setInfo(order[1]);
+			this.gamePan.repaint();
+			this.setVisible(true);
+			break;
+			
 		default :
 			//Drop and Chill.
 			break;

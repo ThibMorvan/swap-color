@@ -5,7 +5,7 @@ import java.io.Serializable;
 
 public class GameBoard {
 
-	private boolean DEBUG = true;
+	private boolean DEBUG = false;
 	
 	//Attributs
 	private int[][][] board;
@@ -233,7 +233,7 @@ public class GameBoard {
 	public int winnerID(){
 		
 		int winnerID = -1;
-		int[] playerScore = new int[nbPlayer];
+		int[] playerScore = new int[nbPlayer + 1];
 		int winningScore = 0;
 		
 		//Initialise les scores

@@ -9,7 +9,7 @@ import java.io.BufferedInputStream;
 
 public class ServerGame implements Runnable {
 	
-	private boolean DEBUG = true;
+	private boolean DEBUG = false;
 
 	private int boardWidth ,boardHeight , nbColor, nbPlayer, nbDeadPlayer = 0, winner = -1, nbBomb;
 	private GameBoard board;
@@ -65,9 +65,12 @@ public class ServerGame implements Runnable {
 		 try{
 
 			//ouverture du serveur
-			listeningPort = 2345;
+			//listeningPort = 2345; //A définir
 			listeningAddress = InetAddress.getLocalHost();	
-			gameServSocket  = new ServerSocket(listeningPort, nbPlayer, listeningAddress);
+			gameServSocket  = new ServerSocket(0, nbPlayer, listeningAddress);
+			
+			listeningPort = gameServSocket.getLocalPort();
+			
 			if(DEBUG) System.err.println("ServerGame > informations de connections envoyées au Main");
 			
 			//informe le Main pour qu'il puisse créer le joueur 1
@@ -100,8 +103,9 @@ public class ServerGame implements Runnable {
 				isAlive[i] = true;
 				
 				//fourni son playerID au joueur qui viens de se connecter, avec le nombre de couleur de la partie, la hauteur et la largeur
-				writer[i].write("INITIALISE|"+ (i+1)+"|"+ nbColor+"|"+ boardHeight+"|"+boardWidth+"|");
+				writer[i].write("INITIALISE|"+ (i+1)+"|"+nbColor+"|"+ boardHeight+"|"+boardWidth+"|"+ listeningAddress +"|"+ listeningPort+"|" );
 				writer[i].flush();
+				
 			}
 			
 			this.playGame();
@@ -113,6 +117,15 @@ public class ServerGame implements Runnable {
 		 	}
 		 
 		 //gestion du game over
+		 for(int i = 0; i < nbPlayer; ++i){
+			 try{
+				 writer[i].close();
+				 reader[i].close();
+				 clientSocket[i].close();
+			 }catch(IOException e){
+				 e.printStackTrace();
+			 }
+		 }
 		 
 	}
 	

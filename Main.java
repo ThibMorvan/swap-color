@@ -117,4 +117,5 @@ public class Main {
 	public static void setServerAddress(String IPAddress) { serverAdress = IPAddress; }
 	public static void setServerPort(String port) {serverPort = port; }
 	
+	
 }
