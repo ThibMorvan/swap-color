@@ -8,6 +8,10 @@ I will welcome critics and avises with open arms !
 
 LOGS :
 
++ 27/05/2016 : Swap Color 1.0 is done, Hell Yeah !
+  No major "break down on fire and explose" bugs anymore, still lots of bugs but can be played entirely ! 
+  Next target : Swap Color 2.0. No more bugs, and a kickass GUI probably in Lua. Hopefully done for christmas.
+
 + 26/05/2016 : Game is now entirely playable once :
   Everything works on the "Model" and "Controler" parts of the game, still a few problems on the "View". Loss of connexion is properly handled on both sides of the sockets.
   * Next step : Game can only be played once and have to be shutdown before starting a new game 
